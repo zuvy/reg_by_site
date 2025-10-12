@@ -1,0 +1,39 @@
+[
+    ~[tlist_sql;
+  SELECT
+    CASE WHEN GROUPING(sch.School_Number)=1 THEN 'ALL SCHOOLS' ELSE sch.Name END AS school_name,
+    CASE WHEN GROUPING(sch.School_Number)=1 THEN NULL ELSE sch.School_Number END AS school_id,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = -1 THEN s.ID END) AS prek,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = 0  THEN s.ID END) AS k,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = 1  THEN s.ID END) AS grade_1,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = 2  THEN s.ID END) AS grade_2,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = 3  THEN s.ID END) AS grade_3,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = 4  THEN s.ID END) AS grade_4,
+    COUNT(DISTINCT CASE WHEN s.Grade_Level = 5  THEN s.ID END) AS grade_5,
+    COUNT(DISTINCT s.ID) AS total_students
+  FROM CC
+  JOIN Students s  ON s.ID = cc.StudentID
+  JOIN Sections se ON se.ID = cc.SectionID
+  JOIN Schools sch ON sch.School_Number = cc.SchoolID
+  JOIN CodeSet cs  ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND cs.Code = 'ELEM'
+  WHERE cc.TermId = 3500
+    AND se.External_Expression = 'AM-PM(A)'
+    AND s.Grade_Level IN (-1,0,1,2,3,4,5)
+    AND s.Enroll_Status = 0
+  GROUP BY GROUPING SETS ( (sch.School_Number, sch.Name), () )
+  ORDER BY school_id NULLS LAST;]
+  {
+    "school_name": "~(school_name)",
+    "school_id": "~(school_id)",
+    "prek": "~(prek)",
+    "k": "~(k)",
+    "grade_1": "~(grade_1)",
+    "grade_2": "~(grade_2)",
+    "grade_3": "~(grade_3)",
+    "grade_4": "~(grade_4)",
+    "grade_5": "~(grade_5)",
+    "total_students": "~(total_students)"
+  },
+
+[/tlist_sql]
+{}]

@@ -1,0 +1,55 @@
+<!--
+TemplateName:Admin
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration by Site Settings</title>
+<!-- required scripts -->
+	~[wc:commonscripts] 
+<!-- Required style sheets: screen.css, and print.css --> 
+	<link href="/images/css/screen.css" rel="stylesheet" media="screen">
+	<link href="/images/css/print.css" rel="stylesheet" media="print">
+	
+    <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      display: none !important;
+      }
+    </style>
+
+</head> 
+<body> 
+	~[wc:admin_header_css] 
+     <div id="breadcrumbs"> 
+ <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">Report Works</a> &gt; <a href="/admin/0_reports/eligibility/eli_setup.html" target="_top">Registration by Site Setup</a> &gt; Registration by Site Preferences<!-- breadcrumb end -->  
+ </div> 
+<!-- start of main menu and content --> 
+	~[wc:admin_navigation_css] 
+<!-- Start of Page --> 
+<div class="box-round" ng-cloak class="ng-cloak">
+	<div><h1 style="text-align:center">Secondary Eligibility Report</h1></div>
+<!-- start of content area --> 
+<ul class="tabs">  
+    <li>  
+        <a class="selected">Elementary Settings</a>
+    </li>
+    <li> 
+        <a href="secondary_settings.html">Secondary Settings</a>
+    </li>
+    <li>
+        <a href="alt_settings.html">Alt School Settings</a>
+    </li>
+</ul>
+    <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" data-ng-controller="pdAppCtrl" ng-site="~(gpv.site)" ng-gl="~(gpv.gl)">
+
+    </div>
+
+    </div>
+</div>
+       
+
+	
+<!-- end of content area --> 
+	~[wc:admin_footer_css] 
+</body> 
+</html>
