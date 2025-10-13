@@ -122,6 +122,24 @@ Three-part structure: tags, query, and row template:
 ~[text:string_key_name]    <!-- Localization text -->
 ```
 
+**PowerSchool Preferences (Prefs Table)**
+```html
+<!-- System-wide preferences -->
+~[displaypref:pref_name;default_optional]     <!-- Global pref value -->
+
+<!-- School-specific preferences -->
+~[displayprefschool:prefname]                 <!-- School pref: prefname-S{schoolid} -->
+~[displayprefschool:curfgname]                <!-- Current grade display format -->
+~[displayprefschoolid:prefname]               <!-- Pref by school ID -->
+
+<!-- Year-specific preferences -->
+~[displayprefyear:pref_name]                  <!-- Year-specific pref -->
+~[displayprefyearschool:prefname]             <!-- Year + school pref -->
+
+<!-- Object report syntax -->
+~(f.pref;fn=get;name=prefname)               <!-- Pref reference in reports -->
+```
+
 ### Data Access Patterns
 
 **1. AJAX calls to PSHTML templates**

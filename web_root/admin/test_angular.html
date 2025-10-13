@@ -1,0 +1,48 @@
+<!--
+TemplateName:Admin
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Angular Test</title>
+    ~[wc:commonscripts]
+    <link href="/images/css/screen.css" rel="stylesheet" media="screen">
+    
+    <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      display: none !important;
+    }
+    </style>
+</head> 
+<body> 
+    ~[wc:admin_header_css]
+    
+    <div class="box-round">
+        <h1>Angular Module Test</h1>
+        
+        <div data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="testCtrl">
+            <div style="background: #e8f5e8; padding: 15px; border: 2px solid #4caf50; margin: 10px 0;">
+                <h3>✓ Angular Bootstrap Test</h3>
+                <p><strong>Test Message:</strong> {{testMessage}}</p>
+                <p><strong>Current Time:</strong> {{currentTime}}</p>
+                <p><strong>2 + 2 =</strong> {{2 + 2}}</p>
+                <input type="text" ng-model="userInput" placeholder="Type something...">
+                <p><strong>You typed:</strong> {{userInput}}</p>
+            </div>
+        </div>
+        
+        <div style="background: #fff3e0; padding: 15px; border: 2px solid #ff9800; margin: 10px 0;">
+            <h3>Instructions</h3>
+            <p>If you can see the green box above with dynamic values, Angular is working!</p>
+            <p>If you see {{}} brackets, Angular is not loading properly.</p>
+            <ul>
+                <li>Check browser console for JavaScript errors</li>
+                <li>Verify ~[wc:commonscripts] is loading RequireJS</li>
+                <li>Check that psbehaviors.js is running automatic bootstrap</li>
+            </ul>
+        </div>
+    </div>
+    
+    ~[wc:admin_footer_css]
+</body>
+</html>

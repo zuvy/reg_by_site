@@ -27,7 +27,7 @@ TemplateName:Admin
 	~[wc:admin_navigation_css] 
 <!-- Start of Page --> 
 <div class="box-round" ng-cloak class="ng-cloak">
-	<div><h1 style="text-align:center">Secondary Eligibility Report</h1></div>
+	<div><h1 style="text-align:center">Registration by Site Settings</h1></div>
 <!-- start of content area --> 
 <ul class="tabs">  
     <li>  
@@ -40,11 +40,114 @@ TemplateName:Admin
         <a href="alt_settings.html">Alt School Settings</a>
     </li>
 </ul>
-    <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" data-ng-controller="pdAppCtrl" ng-site="~(gpv.site)" ng-gl="~(gpv.gl)">
 
+<div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="settingsAppCtrl">
+    
+    <!-- Debug info -->
+    <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">
+        <h4>Debug Info:</h4>
+        <p>Message: {{message}}</p>
+        <p>Loading: {{loading}}</p>
+        <p>Schools count: {{schools.length}}</p>
     </div>
+    
+    <!-- Loading indicator -->
+    <div ng-show="loading" style="text-align: center; padding: 20px;">
+        <p>Loading school data...</p>
+    </div>
+    
+    <form method="POST" action="save_reg_settings.html">
+        <h2>Elementary School Teacher Settings</h2>
+        <p>Set the number of teachers for each grade level at each elementary school.</p>
+        
+        <div class="grid-container">
+            <table class="grid sortable">
+                <thead>
+                    <tr>
+                        <th>School Name</th>
+                        <th>PreK</th>
+                        <th>K</th>
+                        <th>1st</th>
+                        <th>2nd</th>
+                        <th>3rd</th>
+                        <th>4th</th>
+                        <th>5th</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ~[tlist_sql;
+                        SELECT 
+                            sch.Name AS school_name,
+                            sch.School_Number AS school_id
+                        FROM Schools sch
+                        JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND cs.Code = 'ELEM'
+                        WHERE sch.State_Excludefromreporting = 0
+                        ORDER BY sch.Name;]
+                    <tr>
+                        <td><strong>~(school_name)</strong></td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_prek_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_prek]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_k_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_k]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_1_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_1]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_2_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_2]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_3_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_3]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_4_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_4]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   name="teachers_5_~(school_id)" 
+                                   value="~[displayprefschoolid:reg_teachers_5]" 
+                                   min="0" max="10" 
+                                   style="width: 50px;" />
+                        </td>
+                    </tr>
+                    [/tlist_sql]
+                </tbody>
+            </table>
+        </div>
 
-    </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <input type="submit" value="Save Settings" class="button" />
+            <input type="button" value="Cancel" onclick="history.back();" class="button" />
+        </div>
+    </form>
+</div>
+
 </div>
        
 

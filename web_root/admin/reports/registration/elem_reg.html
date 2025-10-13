@@ -1,0 +1,141 @@
+<!--
+TemplateName:Admin
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration by Site</title>
+<!-- required scripts -->
+	~[wc:commonscripts] 
+<!-- Required style sheets: screen.css, and print.css --> 
+	<link href="/images/css/screen.css" rel="stylesheet" media="screen">
+	<link href="/images/css/print.css" rel="stylesheet" media="print">
+	
+    <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      display: none !important;
+      }
+    </style>
+
+</head> 
+<body> 
+	~[wc:admin_header_css] 
+     <div id="breadcrumbs"> 
+ <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">System Reports</a> &gt; <a href="/admin/0_reports/registration/elem_reg.html" target="_top">Elementary Registration</a> &gt; Elementary Registration<!-- breadcrumb end -->  
+ </div> 
+<!-- start of main menu and content --> 
+	~[wc:admin_navigation_css] 
+<!-- Start of Page --> 
+<div class="box-round" ng-cloak class="ng-cloak">
+	<div><h1 style="text-align:center">Elementary Registration</h1></div>
+<!-- start of content area --> 
+<ul class="tabs">  
+    <li>  
+        <a class="selected">Elementary Registration</a>
+    </li>
+    <li> 
+        <a href="sec_reg.html">Secondary Registration</a>
+    </li>
+    <li>
+        <a href=alt_reg.html">Alt Registration</a>
+    </li>
+</ul>
+    <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="elemAppCtrl">
+        
+        <!-- Debug info -->
+        <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">
+            <h4>Debug Info:</h4>
+            <p>Message: {{message}}</p>
+            <p>Loading: {{loading}}</p>
+            <p>Data count: {{elemData.length}}</p>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div ng-show="loading" style="text-align: center; padding: 20px;">
+            <p>Loading elementary registration data...</p>
+        </div>
+        
+        <!-- Registration enrollment table -->
+        <div ng-show="!loading && elemData.length > 0">
+            <h2>Elementary School Registration Report</h2>
+            <p><strong>Report Date:</strong> {{elDate}} at {{elTime}}</p>
+            
+            <div class="grid-container" style="margin-top: 20px;">
+                <table class="grid sortable">
+                    <thead>
+                        <tr>
+                            <th>School Name</th>
+                            <th>PreK</th>
+                            <th>K</th>
+                            <th>1st</th>
+                            <th>2nd</th>
+                            <th>3rd</th>
+                            <th>4th</th>
+                            <th>5th</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="school in elemData">
+                            <td><strong>{{school.school_name}}</strong></td>
+                            <td>{{formatNumber(school.enrollment.prek)}}</td>
+                            <td>{{formatNumber(school.enrollment.k)}}</td>
+                            <td>{{formatNumber(school.enrollment.grade_1)}}</td>
+                            <td>{{formatNumber(school.enrollment.grade_2)}}</td>
+                            <td>{{formatNumber(school.enrollment.grade_3)}}</td>
+                            <td>{{formatNumber(school.enrollment.grade_4)}}</td>
+                            <td>{{formatNumber(school.enrollment.grade_5)}}</td>
+                            <td><strong>{{formatNumber(school.enrollment.total)}}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- No data message -->
+        <div ng-show="!loading && elemData.length === 0" style="text-align: center; padding: 20px;">
+            <p>No elementary registration data available. Please check that teacher capacity settings have been configured.</p>
+            <p><a href="../district/reg_site_settings.html" class="button">Configure Settings</a></p>
+        </div>
+    </div>
+
+    <!-- Add custom styles for the report -->
+    <style>
+        .grid-container { overflow-x: auto; }
+        .grid th { font-size: 11px; padding: 4px; text-align: center; }
+        .grid td { font-size: 12px; padding: 4px; text-align: center; }
+        .grid td.enrolled { background-color: #e3f2fd; }
+        .grid td.capacity { background-color: #f3e5f5; }
+        .grid td.available.has-seats { background-color: #e8f5e8; color: #2e7d32; }
+        .grid td.available.no-seats { background-color: #ffebee; color: #c62828; }
+        .grid td.total { font-weight: bold; border-left: 2px solid #666; }
+        
+        .status-badge { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .over-capacity { background-color: #ffcdd2; color: #c62828; }
+        .near-capacity { background-color: #fff3e0; color: #ef6c00; }
+        .good-capacity { background-color: #dcedc8; color: #388e3c; }
+        .under-capacity { background-color: #e1f5fe; color: #0277bd; }
+        
+        .over-capacity .status-badge { background-color: #f44336; color: white; }
+        .near-capacity .status-badge { background-color: #ff9800; color: white; }
+        .good-capacity .status-badge { background-color: #4caf50; color: white; }
+        .under-capacity .status-badge { background-color: #2196f3; color: white; }
+    </style>
+
+    </div>
+</div>
+       
+
+	
+<!-- end of content area --> 
+	~[wc:admin_footer_css] 
+</body> 
+</html>

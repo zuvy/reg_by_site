@@ -1,0 +1,26 @@
+{
+  "pages": [
+    {
+      "htmlID": "nav_reg-site_settings",
+      "parentHTMLID": "navDistrictManagementSection",
+      "title": "Registration Count Settings",
+      "pageURL": "/admin/district/reg_site_settings.html",
+      "contextType": "main",
+      "requiredContext": "main",
+      "sortOrder": "895",
+      "version": "0.1.0"
+      
+    },
+    {
+      "htmlID": "nav_reg_site--elem-data",
+      "parentHTMLID": "navDataAndReportingReports",
+      "title": "Registration by Site",
+      "pageURL": "/admin/reports/registration/elem_reg.html",
+      "requiredContext": "main",
+      "contextType": "main",
+      "isNewTab": "true",
+      "sortOrder": "750",
+      "version": "0.1.0"
+    } 
+  ]
+}

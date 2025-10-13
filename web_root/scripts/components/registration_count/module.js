@@ -1,6 +1,7 @@
-define(function(require)
-{'use strict';
+'use strict';
+define(function(require) {
     var angular = require('angular');
-    require('components/customization/customizationModule')
-    return angular.module('regAppModule', ['customizationModule']);
+    
+    // Define the module - this is where we add it to AngularJS module list
+    return angular.module('regAppModule', []);
 });

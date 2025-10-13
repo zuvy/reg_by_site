@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://plugin.powerschool.pearson.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd" name="Registration Count by Site" description="Display classroom enrollment by site" version="0.01.0">
+  <autoinstall required="true">
+    <autoenable required="true" />
+    <autoredeploy />
+  </autoinstall>
+  <publisher name="Joe Zuvanich - Tulsa Public Schools">
+    <contact email="zuvanjo@tulsaschools.org"/>
+  </publisher>
+</plugin>

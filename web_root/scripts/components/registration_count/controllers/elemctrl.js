@@ -1,45 +1,94 @@
-define(function (require) {
-	'use strict'
-		var module = require('components/eligibility/module');
-		var $j = require('jquery');
-		module.controller('listAppCtrl',['$scope', '$q', '$http', 'getData', '$attrs', '$filter', function($scope, $q, $http, getData, $attrs, $filter) {
-			$scope.message = 'listAppCtrl message.';
-			$scope.elemData = [];
-			$scope.elDate = $filter('date')(new Date(), "MM/dd/yyyy");
-			//console.log("elDate = " + $scope.elDate);
-			$scope.elTime = $filter('date')(new Date(), "HH:mm");
-			//console.log("elTime = " + $scope.elTime);
-			$scope.site = $attrs.ngSite;
-			$scope.g_num = $attrs.ngGrade;
-			//console.log("site = " + $scope.site + " g_num = " + $scope.g_num)
-			
-			var sData = {};
-			
+'use strict';
+define(function(require) {
+	var module = require('components/registration_count/module');
+	
+	module.controller('elemAppCtrl', ['$scope', '$q', '$http', 'getData', '$attrs', '$filter', function($scope, $q, $http, getData, $attrs, $filter) {
+		console.log('Elementary controller loaded');
+		$scope.message = 'Elementary Registration Controller';
+		$scope.elemData = [];
+		$scope.loading = true;
+		$scope.elDate = $filter('date')(new Date(), "MM/dd/yyyy");
+		$scope.elTime = $filter('date')(new Date(), "HH:mm");
+		$scope.site = $attrs.ngSite;
+		$scope.g_num = $attrs.ngGrade;
+		
+		// Grade level labels for display
+		$scope.gradeLabels = {
+			'prek': 'PreK',
+			'k': 'K',
+			'grade_1': '1st',
+			'grade_2': '2nd',
+			'grade_3': '3rd',
+			'grade_4': '4th',
+			'grade_5': '5th'
+		};
+		
+		// Load elementary registration data
+		$scope.loadElementaryData = function() {
+			console.log("Loading elementary data...");
 			var elemData = {
-				"method": 'POST',
-				"url": `js/elem_reg.json?s_num=${$scope.site}&g_num=${$scope.g_num}`,
+				"method": 'GET',
+				"url": `js/elem_reg.json`,
 				"headers": {
-				"Content-Type": "application/json",
-				"Accept": "application/json",
-				"dataType": "json"
+					"Content-Type": "application/json",
+					"Accept": "application/json"
 				}
 			};
 			
-			sData = elemData;
-			
-			let listData = 
-			getData.getElemData(sData).then(function(retData) {
+			getData.getElemData(elemData).then(function(retData) {
+				console.log("Raw elementary data response:", retData);
 				if(!retData) {
-					console.log("Demographics data retData not returned.");
+					console.log("Elementary registration data not returned.");
+					$scope.loading = false;
+				} else {
+					// Filter out empty objects and process data
+					$scope.elemData = retData.filter(function(item) {
+						return item.school_id;
+          });
+          console.log("elementary data");
+          console.log($scope.elemData);
+					
+					// Just process the enrollment data - no capacity calculations needed
+					console.log("Processed elementary data:", $scope.elemData);
+					
+					$scope.loading = false;
+					console.log("Elementary registration data loaded:", $scope.elemData);
 				}
-				else {
-					$scope.listData = (retData);
-					$scope.listString = JSON.stringify($scope.listData);
-					angular.element('#data_submit').prop('value', $scope.listString);
-					angular.element('#el_date').prop('value', $scope.elDate);
-					angular.element('#el_time').prop('value', $scope.elTime);
-					angular.element('#p_form').prop('action', `eli_process.html?site=${$scope.site}&gl=${$scope.g_num}`)
-					console.log("listData");
-					//console.log($scope.listString)
-					}
-				}); // End getHd function
+			}).catch(function(error) {
+				console.error("Error loading elementary data:", error);
+				$scope.loading = false;
+			});
+		};
+		
+		// Get status class for utilization display
+		$scope.getUtilizationClass = function(utilization) {
+			if (utilization >= 95) return 'over-capacity';
+			if (utilization >= 85) return 'near-capacity';
+			if (utilization >= 70) return 'good-capacity';
+			return 'under-capacity';
+		};
+		
+		// Get status text
+		$scope.getStatusText = function(enrolled, capacity) {
+			if (capacity == 0) return 'No Teachers';
+			var utilization = Math.round((enrolled / capacity) * 100);
+			if (utilization >= 95) return 'Over Capacity';
+			if (utilization >= 85) return 'Near Capacity';
+			if (utilization >= 70) return 'Good';
+			return 'Available';
+		};
+		
+		// Format numbers for display
+		$scope.formatNumber = function(value) {
+			return parseInt(value || 0);
+		};
+		
+		// Initialize the controller
+		$scope.init = function() {
+			$scope.loadElementaryData();
+		};
+		
+		// Start the application
+		$scope.init();
+	}]);
+});
