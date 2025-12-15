@@ -10,13 +10,11 @@ TemplateName:Admin
 <!-- Required style sheets: screen.css, and print.css --> 
 	<link href="/images/css/screen.css" rel="stylesheet" media="screen">
 	<link href="/images/css/print.css" rel="stylesheet" media="print">
-	
     <style>
     [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
       display: none !important;
       }
     </style>
-
 </head> 
 <body> 
 	~[wc:admin_header_css] 
@@ -56,7 +54,7 @@ TemplateName:Admin
         <p>Loading school data...</p>
     </div>
     
-    <form method="POST" action="save_reg_settings.html">
+    <form action="/~[self.page]?changesSaved=true" method="POST">
         <h2>Elementary School Teacher Settings</h2>
         <p>Set the number of teachers for each grade level at each elementary school.</p>
         
@@ -77,8 +75,8 @@ TemplateName:Admin
                 <tbody>
                     ~[tlist_sql;
                         SELECT 
-                            sch.Name AS school_name,
-                            sch.School_Number AS school_id
+                            sch.Name AS school_name
+                            , sch.School_Number AS school_id
                         FROM Schools sch
                         JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND cs.Code = 'ELEM'
                         WHERE sch.State_Excludefromreporting = 0
@@ -86,53 +84,53 @@ TemplateName:Admin
                     <tr>
                         <td><strong>~(school_name)</strong></td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_prek_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_prek]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_prek_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_k_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_k]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_k_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_1_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_1]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_1_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_2_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_2]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_2_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_3_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_3]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_3_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_4_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_4]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_4_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                         <td>
-                            <input type="number" 
-                                   name="teachers_5_~(school_id)" 
-                                   value="~[displayprefschoolid:reg_teachers_5]" 
-                                   min="0" max="10" 
-                                   style="width: 50px;" />
+                                <input type="number" 
+                                    name="[pref]teachers_5_~(school_id)" 
+                                    value="" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
                         </td>
                     </tr>
                     [/tlist_sql]
@@ -141,10 +139,10 @@ TemplateName:Admin
         </div>
 
         
-        <div style="margin-top: 20px; text-align: center;">
-            <input type="submit" value="Save Settings" class="button" />
-            <input type="button" value="Cancel" onclick="history.back();" class="button" />
-        </div>
+	<div class="button-row">
+	    <input type="hidden" name="ac" value="prim">
+	    ~[submitbutton]
+	</div>
     </form>
 </div>
 
