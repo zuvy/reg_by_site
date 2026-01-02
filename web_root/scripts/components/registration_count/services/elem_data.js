@@ -2,7 +2,7 @@
 define(function(require) {
     var module = require('components/registration_count/module');
     
-    // Data service for elementary registration  
+    // Data service for district registration  
     module.factory('getData', ['$http', function($http) {
         return {
             getElemData: function(datasource) {

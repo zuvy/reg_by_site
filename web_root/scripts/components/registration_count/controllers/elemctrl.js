@@ -3,8 +3,8 @@ define(function(require) {
 	var module = require('components/registration_count/module');
 	
 	module.controller('elemAppCtrl', ['$scope', '$q', '$http', 'getData', '$attrs', '$filter', function($scope, $q, $http, getData, $attrs, $filter) {
-		console.log('Elementary controller loaded');
-		$scope.message = 'Elementary Registration Controller';
+		console.log('District registration controller loaded');
+		$scope.message = 'District Registration Controller';
 		$scope.regData = null;
 		$scope.loading = true;
 		$scope.elDate = $filter('date')(new Date(), "MM/dd/yyyy");
@@ -12,9 +12,9 @@ define(function(require) {
 		$scope.site = $attrs.ngSite;
 		$scope.g_num = $attrs.ngGrade;
 		
-		// Load elementary registration data
+		// Load district registration data
 		$scope.loadElementaryData = function() {
-			console.log("Loading elementary registration data...");
+			console.log("Loading district registration data...");
 			var elemData = {
 				"method": 'GET',
 				"url": `js/dist_reg.json`,
@@ -27,15 +27,15 @@ define(function(require) {
 			getData.getElemData(elemData).then(function(retData) {
 				console.log("Raw elementary data response:", retData);
 				if(!retData) {
-					console.log("Elementary registration data not returned.");
+					console.log("District registration data not returned.");
 					$scope.loading = false;
 				} else {
 					$scope.regData = retData;
-					console.log("Elementary registration data loaded:", $scope.regData);
+					console.log("District registration data loaded:", $scope.regData);
 					$scope.loading = false;
 				}
 			}).catch(function(error) {
-				console.error("Error loading elementary data:", error);
+				console.error("Error loading district data:", error);
 				$scope.loading = false;
 			});
 		};

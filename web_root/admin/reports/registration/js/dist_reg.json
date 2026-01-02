@@ -119,45 +119,5 @@
     "grade_11": "~(grade_11)",
     "grade_12": "~(grade_12)",
     "total": "~(total)"
-  }[/tlist_sql],
-  "special_ed": ~[tlist_sql;
-  SELECT
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = -2 THEN s.ID END) AS grade_n2,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = -1 THEN s.ID END) AS grade_n1,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 0  THEN s.ID END) AS grade_0,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 1  THEN s.ID END) AS grade_1,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 2  THEN s.ID END) AS grade_2,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 3  THEN s.ID END) AS grade_3,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 4  THEN s.ID END) AS grade_4,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 5  THEN s.ID END) AS grade_5,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 6  THEN s.ID END) AS grade_6,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 7  THEN s.ID END) AS grade_7,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 8  THEN s.ID END) AS grade_8,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 9  THEN s.ID END) AS grade_9,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 10 THEN s.ID END) AS grade_10,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 11 THEN s.ID END) AS grade_11,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 12 THEN s.ID END) AS grade_12,
-    COUNT(DISTINCT s.ID) AS total
-  FROM Students s
-  JOIN U_STUDENTSUSERFIELDS ue ON s.DCID = ue.STUDENTSDCID
-  WHERE s.Enroll_Status = 0 
-    AND s.SchoolID > 100
-    AND s.TeacherGroupID > 0;]{
-    "grade_n2": "~(grade_n2)",
-    "grade_n1": "~(grade_n1)",
-    "grade_0": "~(grade_0)",
-    "grade_1": "~(grade_1)",
-    "grade_2": "~(grade_2)",
-    "grade_3": "~(grade_3)",
-    "grade_4": "~(grade_4)",
-    "grade_5": "~(grade_5)",
-    "grade_6": "~(grade_6)",
-    "grade_7": "~(grade_7)",
-    "grade_8": "~(grade_8)",
-    "grade_9": "~(grade_9)",
-    "grade_10": "~(grade_10)",
-    "grade_11": "~(grade_11)",
-    "grade_12": "~(grade_12)",
-    "total": "~(total)"
   }[/tlist_sql]
 }
