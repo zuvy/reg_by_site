@@ -1,0 +1,69 @@
+[
+~[tlist_sql;
+WITH scd AS (
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    'regular' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  WHERE cs.Code = 'ELEM'
+  AND Students.Enroll_Status = 0
+  GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
+  
+  UNION ALL
+  
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    'virtual' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  JOIN S_OK_STU_X sx ON Students.DCID = sx.StudentsDCID
+  WHERE cs.Code = 'ELEM'
+  AND Students.Enroll_Status = 0
+  AND (sx.AdmissionBasis = 'RVON' OR sx.AdmissionBasis = 'RVOFF')
+  GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
+),
+teach_prefs AS (
+  SELECT Prefs.Name AS tp_name, Prefs.Value AS teacher_count
+  FROM Prefs WHERE Prefs.Name LIKE 'teachers-rc-%'
+),
+cs_prefs AS (
+  SELECT Prefs.Name AS cs_name, Prefs.Value AS class_size
+  FROM Prefs WHERE Prefs.Name LIKE 'class-size-rc-%'
+)
+
+SELECT scd.student_count
+     , scd.grade_level
+     , scd.school_name
+     , scd.school_id
+     , scd.student_type
+     , teach_prefs.teacher_count
+     , cs_prefs.class_size
+     , TO_NUMBER(teach_prefs.teacher_count) * TO_NUMBER(cs_prefs.class_size) AS max_count
+     , (TO_NUMBER(teach_prefs.teacher_count) * TO_NUMBER(cs_prefs.class_size)) - scd.student_count AS seats_available
+FROM scd
+LEFT JOIN teach_prefs ON teach_prefs.tp_name = 'teachers-rc-' || scd.grade_level || '-' || scd.school_id
+LEFT JOIN cs_prefs ON cs_prefs.cs_name = 'class-size-rc-' || scd.grade_level
+ORDER BY scd.school_name
+]
+  {
+    "student_count": "~(student_count)",
+    "grade_level": "~(grade_level)",
+    "school_name": "~(school_name)",
+    "school_id": "~(school_id)",
+    "student_type": "~(student_type)",
+    "teacher_count": "~(teacher_count)",
+    "class_size": "~(class_size)",
+    "max_count": "~(max_count)",
+    "seats_available": "~(seats_available)"
+  },
+[/tlist_sql]
+{}]

@@ -55,7 +55,14 @@ TemplateName:Admin
     </div>
     
     <form action="/~[self.page]?changesSaved=true" method="POST">
-        <h2>Elementary School Teacher Settings</h2>
+        
+        ~[if.~(gpv.changesSaved)=true]
+        <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; margin: 10px 0; border-radius: 5px;">
+            <strong>✓ Success!</strong> Settings have been saved successfully.
+        </div>
+        [/if]
+        
+        <h2>Elementary School Teacher Counts</h2>
         <p>Set the number of teachers for each grade level at each elementary school.</p>
         
         <div class="grid-container">
@@ -63,6 +70,7 @@ TemplateName:Admin
                 <thead>
                     <tr>
                         <th>School Name</th>
+                        <th>PreK-2</th>
                         <th>PreK</th>
                         <th>K</th>
                         <th>1st</th>
@@ -73,6 +81,65 @@ TemplateName:Admin
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>Class Size</td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc--2" 
+                                value="~[displaypref:class-size-rc--2;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc--1" 
+                                value="~[displaypref:class-size-rc--1;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc-0" 
+                                value="~[displaypref:class-size-rc-0;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc-1" 
+                                value="~[displaypref:class-size-rc-1;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number"        
+                                name="[pref]class-size-rc-2" 
+                                value="~[displaypref:class-size-rc-2;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc-3" 
+                                value="~[displaypref:class-size-rc-3;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc-4" 
+                                value="~[displaypref:class-size-rc-4;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                        <td>
+                            <input type="number" 
+                                name="[pref]class-size-rc-5" 
+                                value="~[displaypref:class-size-rc-5;20]" 
+                                min="1" max="40" 
+                                style="width: 50px;" />
+                        </td>
+                    </tr>
                     ~[tlist_sql;
                         SELECT 
                             sch.Name AS school_name
@@ -85,50 +152,57 @@ TemplateName:Admin
                         <td><strong>~(school_name)</strong></td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_prek_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc--2-~(school_id)" 
+                                    value="~[displaypref:teachers-rc--2-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_k_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc--1-~(school_id)" 
+                                    value="~[displaypref:teachers-rc--1-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_1_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc-0-~(school_id)" 
+                                    value="~[displaypref:teachers-rc-0-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_2_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc-1-~(school_id)" 
+                                    value="~[displaypref:teachers-rc-1-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_3_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc-2-~(school_id)" 
+                                    value="~[displaypref:teachers-rc-2-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_4_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc-3-~(school_id)" 
+                                    value="~[displaypref:teachers-rc-3-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>
                         <td>
                                 <input type="number" 
-                                    name="[pref]teachers_5_~(school_id)" 
-                                    value="" 
+                                    name="[pref]teachers-rc-4-~(school_id)" 
+                                    value="~[displaypref:teachers-rc-4-~(school_id);0]" 
+                                    min="0" max="10" 
+                                    style="width: 50px;" />
+                        </td>
+                        <td>
+                                <input type="number" 
+                                    name="[pref]teachers-rc-5-~(school_id)" 
+                                    value="~[displaypref:teachers-rc-5-~(school_id);0]" 
                                     min="0" max="10" 
                                     style="width: 50px;" />
                         </td>

@@ -29,9 +29,9 @@ TemplateName:Admin
 <div class="box-round" ng-cloak class="ng-cloak">
 	<div><h1 style="text-align:center">District Registration</h1></div>
 <!-- start of content area --> 
-<ul class="tabs">  
-    <li>  
-        <a class="selected">District Registration</a>
+<ul id="nav-secondary" class="tabs shown_tabs">  
+    <li class="selected">  
+        <a href="dist_reg.html">District Registration</a>
     </li>
     <li>
         <a href="elem_reg.html">Elementary Registration</a>
@@ -40,7 +40,7 @@ TemplateName:Admin
         <a href="sec_reg.html">Secondary Registration</a>
     </li>
     <li>
-        <a href=alt_reg.html">Alt Registration</a>
+        <a href="alt_reg.html">Alt Registration</a>
     </li>
 </ul>
     <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="elemAppCtrl">
@@ -145,6 +145,58 @@ TemplateName:Admin
                             <td><center>{{regData.totals.grade_12}}</center></td>
                             <td></td>
                             <td><center>{{regData.totals.total}}</center></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- School Category Breakdown Table -->
+            <div class="box-round" style="margin-top: 30px;">
+                <h2>Registration by School Category</h2>
+                <table border="0" cellpadding="0" cellspacing="0" class="grid" id="tableCategoryID">
+                    <caption>Student counts by school category</caption>
+                    <thead>
+                        <tr>
+                            <th>School Category</th>
+                            <th>-2</th>
+                            <th>-1</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>10</th>
+                            <th>11</th>
+                            <th>12</th>
+                            <th></th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="category in categoryData">
+                            <td>{{category.category_name}}</td>
+                            <td><center>{{category.grade_n2}}</center></td>
+                            <td><center>{{category.grade_n1}}</center></td>
+                            <td><center>{{category.grade_0}}</center></td>
+                            <td><center>{{category.grade_1}}</center></td>
+                            <td><center>{{category.grade_2}}</center></td>
+                            <td><center>{{category.grade_3}}</center></td>
+                            <td><center>{{category.grade_4}}</center></td>
+                            <td><center>{{category.grade_5}}</center></td>
+                            <td><center>{{category.grade_6}}</center></td>
+                            <td><center>{{category.grade_7}}</center></td>
+                            <td><center>{{category.grade_8}}</center></td>
+                            <td><center>{{category.grade_9}}</center></td>
+                            <td><center>{{category.grade_10}}</center></td>
+                            <td><center>{{category.grade_11}}</center></td>
+                            <td><center>{{category.grade_12}}</center></td>
+                            <td></td>
+                            <td><center>{{category.total}}</center></td>
                         </tr>
                     </tbody>
                 </table>

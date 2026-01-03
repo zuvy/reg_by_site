@@ -4,7 +4,7 @@ TemplateName:Admin
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Secondary Eligibility Report</title>
+	<title>Alternative Registration</title>
 <!-- required scripts -->
 	~[wc:commonscripts] 
 <!-- Required style sheets: screen.css, and print.css --> 
@@ -21,26 +21,26 @@ TemplateName:Admin
 <body> 
 	~[wc:admin_header_css] 
      <div id="breadcrumbs"> 
- <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">Report Works</a> &gt; <a href="/admin/0_reports/eligibility/eli_setup.html" target="_top">Eligibility Setup</a> &gt; Secondary Eligibility Report<!-- breadcrumb end -->  
+ <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">System Reports</a> &gt; <a href="/admin/reports/registration/alt_reg.html" target="_top">Alternative Registration</a> &gt; Alternative Registration<!-- breadcrumb end -->  
  </div> 
 <!-- start of main menu and content --> 
 	~[wc:admin_navigation_css] 
 <!-- Start of Page --> 
 <div class="box-round" ng-cloak class="ng-cloak">
-	<div><h1 style="text-align:center">Secondary Eligibility Report</h1></div>
+	<div><h1 style="text-align:center">Alternative Registration</h1></div>
 <!-- start of content area --> 
-<ul class="tabs">  
+<ul id="nav-secondary" class="tabs shown_tabs">  
     <li>  
         <a href="dist_reg.html">District Registration</a>
     </li>
-    <li class="selected"> 
+    <li> 
         <a href="elem_reg.html">Elementary Registration</a>
     </li>
     <li>  
-        <a href="">Secondary Registration</a>
+        <a href="sec_reg.html">Secondary Registration</a>
     </li>
-    <li>
-        <a class="selected" href="">Alt Registration</a>
+    <li class="selected">
+        <a href="alt_reg.html">Alt Registration</a>
     </li>
 </ul>
 <div>
