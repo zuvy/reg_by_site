@@ -1,0 +1,226 @@
+<!--
+TemplateName:Admin
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration by Site</title>
+<!-- required scripts -->
+	~[wc:commonscripts] 
+<!-- Required style sheets: screen.css, and print.css --> 
+	<link href="/images/css/screen.css" rel="stylesheet" media="screen">
+	<link href="/images/css/print.css" rel="stylesheet" media="print">
+	
+    <style>
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      display: none !important;
+      }
+    </style>
+
+</head> 
+<body> 
+	~[wc:admin_header_css] 
+     <div id="breadcrumbs"> 
+ <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">System Reports</a> &gt; <a href="/admin/reports/registration/dist_reg.html" target="_top">District Registration</a> &gt; District Registration<!-- breadcrumb end -->  
+ </div> 
+<!-- start of main menu and content --> 
+	~[wc:admin_navigation_css] 
+<!-- Start of Page --> 
+<div class="box-round" ng-cloak class="ng-cloak">
+	<div><h1 style="text-align:center">District Registration</h1></div>
+<!-- start of content area --> 
+<ul id="nav-secondary" class="tabs shown_tabs">  
+    <li class="selected">  
+        <a href="dist_reg.html">District Registration</a>
+    </li>
+    <li>
+        <a href="elem_reg.html">Elementary Registration</a>
+    </li>
+    <li> 
+        <a href="sec_reg.html">Secondary Registration</a>
+    </li>
+    <li>
+        <a href="alt_reg.html">Alt Registration</a>
+    </li>
+</ul>
+    <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="elemAppCtrl">
+        
+        <!-- Loading indicator -->
+        <div ng-show="loading" style="text-align: center; padding: 20px;">
+            <p>Loading district registration data...</p>
+        </div>
+        
+        <!-- Registration enrollment table -->
+        <div ng-show="!loading && regData">
+            <div class="button-row">
+                <button type="button" class="autoReloadPage">Refresh</button>
+            </div>
+            
+            <div class="box-round">
+                <!-- This is a standards driven table. there are no styles, borders, widths and there is a header row-->
+                <table border="0" cellpadding="0" cellspacing="0" class="grid" id="tableUniqueID">
+                    <caption>Numbers reflect online registrations for active students, and do not include inactive students with missing documents.</caption>
+                    <caption>Subtract the totals from the two bottom rows below to reconcile the district total with the district level Enrollment Summary</caption>
+                    <thead>
+                        <tr>
+                            <th>District Wide</th>
+                            <th>-2</th>
+                            <th>-1</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>10</th>
+                            <th>11</th>
+                            <th>12</th>
+                            <th></th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Regular</td>
+                            <td><center>{{regData.totals.grade_n2 - regData.virtual.grade_n2}}</center></td>
+                            <td><center>{{regData.totals.grade_n1 - regData.virtual.grade_n1}}</center></td>
+                            <td><center>{{regData.totals.grade_0 - regData.virtual.grade_0}}</center></td>
+                            <td><center>{{regData.totals.grade_1 - regData.virtual.grade_1}}</center></td>
+                            <td><center>{{regData.totals.grade_2 - regData.virtual.grade_2}}</center></td>
+                            <td><center>{{regData.totals.grade_3 - regData.virtual.grade_3}}</center></td>
+                            <td><center>{{regData.totals.grade_4 - regData.virtual.grade_4}}</center></td>
+                            <td><center>{{regData.totals.grade_5 - regData.virtual.grade_5}}</center></td>
+                            <td><center>{{regData.totals.grade_6 - regData.virtual.grade_6}}</center></td>
+                            <td><center>{{regData.totals.grade_7 - regData.virtual.grade_7}}</center></td>
+                            <td><center>{{regData.totals.grade_8 - regData.virtual.grade_8}}</center></td>
+                            <td><center>{{regData.totals.grade_9 - regData.virtual.grade_9}}</center></td>
+                            <td><center>{{regData.totals.grade_10 - regData.virtual.grade_10}}</center></td>
+                            <td><center>{{regData.totals.grade_11 - regData.virtual.grade_11}}</center></td>
+                            <td><center>{{regData.totals.grade_12 - regData.virtual.grade_12}}</center></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        
+                        <tr>
+                            <td><span title="Virtual Students">Virtual Students</span></td>
+                            <td></td>
+                            <td></td>
+                            <td><center>{{regData.virtual.grade_0}}</center></td>
+                            <td><center>{{regData.virtual.grade_1}}</center></td>
+                            <td><center>{{regData.virtual.grade_2}}</center></td>
+                            <td><center>{{regData.virtual.grade_3}}</center></td>
+                            <td><center>{{regData.virtual.grade_4}}</center></td>
+                            <td><center>{{regData.virtual.grade_5}}</center></td>
+                            <td><center>{{regData.virtual.grade_6}}</center></td>
+                            <td><center>{{regData.virtual.grade_7}}</center></td>
+                            <td><center>{{regData.virtual.grade_8}}</center></td>
+                            <td><center>{{regData.virtual.grade_9}}</center></td>
+                            <td><center>{{regData.virtual.grade_10}}</center></td>
+                            <td><center>{{regData.virtual.grade_11}}</center></td>
+                            <td><center>{{regData.virtual.grade_12}}</center></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        
+                        <tr>
+                            <td>Totals</td>
+                            <td><center>{{regData.totals.grade_n2}}</center></td>
+                            <td><center>{{regData.totals.grade_n1}}</center></td>
+                            <td><center>{{regData.totals.grade_0}}</center></td>
+                            <td><center>{{regData.totals.grade_1}}</center></td>
+                            <td><center>{{regData.totals.grade_2}}</center></td>
+                            <td><center>{{regData.totals.grade_3}}</center></td>
+                            <td><center>{{regData.totals.grade_4}}</center></td>
+                            <td><center>{{regData.totals.grade_5}}</center></td>
+                            <td><center>{{regData.totals.grade_6}}</center></td>
+                            <td><center>{{regData.totals.grade_7}}</center></td>
+                            <td><center>{{regData.totals.grade_8}}</center></td>
+                            <td><center>{{regData.totals.grade_9}}</center></td>
+                            <td><center>{{regData.totals.grade_10}}</center></td>
+                            <td><center>{{regData.totals.grade_11}}</center></td>
+                            <td><center>{{regData.totals.grade_12}}</center></td>
+                            <td></td>
+                            <td><center>{{regData.totals.total}}</center></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- School Category Breakdown Table -->
+            <div class="box-round" style="margin-top: 30px;">
+                <h2>Registration by School Category</h2>
+                <table border="0" cellpadding="0" cellspacing="0" class="grid" id="tableCategoryID">
+                    <caption>Student counts by school category</caption>
+                    <thead>
+                        <tr>
+                            <th>School Category</th>
+                            <th>-2</th>
+                            <th>-1</th>
+                            <th>0</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>10</th>
+                            <th>11</th>
+                            <th>12</th>
+                            <th></th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="category in categoryData">
+                            <td>{{category.category_name}}</td>
+                            <td><center>{{category.grade_n2}}</center></td>
+                            <td><center>{{category.grade_n1}}</center></td>
+                            <td><center>{{category.grade_0}}</center></td>
+                            <td><center>{{category.grade_1}}</center></td>
+                            <td><center>{{category.grade_2}}</center></td>
+                            <td><center>{{category.grade_3}}</center></td>
+                            <td><center>{{category.grade_4}}</center></td>
+                            <td><center>{{category.grade_5}}</center></td>
+                            <td><center>{{category.grade_6}}</center></td>
+                            <td><center>{{category.grade_7}}</center></td>
+                            <td><center>{{category.grade_8}}</center></td>
+                            <td><center>{{category.grade_9}}</center></td>
+                            <td><center>{{category.grade_10}}</center></td>
+                            <td><center>{{category.grade_11}}</center></td>
+                            <td><center>{{category.grade_12}}</center></td>
+                            <td></td>
+                            <td><center>{{category.total}}</center></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- No data message -->
+        <div ng-show="!loading && !regData" style="text-align: center; padding: 20px;">
+            <p>No registration data available.</p>
+        </div>
+    </div>
+
+    <!-- Add minimal custom styles -->
+    <style>
+        .grid th { text-align: center; }
+        .grid td { text-align: left; }
+    </style>
+
+    </div>
+</div>
+       
+
+	
+<!-- end of content area --> 
+	~[wc:admin_footer_css] 
+</body> 
+</html>

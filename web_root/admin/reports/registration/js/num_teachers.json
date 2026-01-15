@@ -1,29 +1,21 @@
 [
     ~[tlist_sql;
         SELECT 
-            sch.Name AS school_name,
-            sch.School_Number AS school_id,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_prek'), '') AS teachers_prek,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_k'), '') AS teachers_k,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_1'), '') AS teachers_1,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_2'), '') AS teachers_2,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_3'), '') AS teachers_3,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_4'), '') AS teachers_4,
-            COALESCE((SELECT value FROM prefs WHERE schoolid = sch.School_Number AND LOWER(name) = 'reg_teachers_5'), '') AS teachers_5
-        FROM Schools sch
-        JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND cs.Code = 'ELEM'
-        WHERE sch.State_Excludefromreporting = 0
-        ORDER BY sch.Name;]
+            Prefs.Name AS pref_name,
+            Prefs.Value AS number_of_teachers,
+            SUBSTR(Prefs.Name, -3) AS school_id,
+            Schools.Name AS school_name,
+            REGEXP_SUBSTR(Prefs.Name, 'rc-(-?\d+)-', 1, 1, NULL, 1) AS grade_level
+        FROM Prefs
+        JOIN Schools ON Schools.School_Number = SUBSTR(Prefs.Name, -3)
+        WHERE Prefs.Name LIKE '%teachers-rc%'
+        ORDER BY Schools.Name, grade_level;]
     {
-        "school_name": "~(school_name)",
+        "pref_name": "~(pref_name)",
+        "number_of_teachers": "~(number_of_teachers)",
         "school_id": "~(school_id)",
-        "teachers_prek": "~(teachers_prek)",
-        "teachers_k": "~(teachers_k)",
-        "teachers_1": "~(teachers_1)",
-        "teachers_2": "~(teachers_2)",
-        "teachers_3": "~(teachers_3)",
-        "teachers_4": "~(teachers_4)",
-        "teachers_5": "~(teachers_5)"
+        "school_name": "~(school_name)",
+        "grade_level": "~(grade_level)"
     },
 [/tlist_sql]
 {}]

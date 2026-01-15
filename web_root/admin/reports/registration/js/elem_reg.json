@@ -1,41 +1,69 @@
 [
-    ~[tlist_sql;
+~[tlist_sql;
+WITH scd AS (
   SELECT
-    CASE WHEN GROUPING(sch.School_Number)=1 THEN 'ALL SCHOOLS' ELSE sch.Name END AS school_name,
-    CASE WHEN GROUPING(sch.School_Number)=1 THEN NULL ELSE sch.School_Number END AS school_id,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = -1 THEN s.ID END) AS enrolled_prek,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 0  THEN s.ID END) AS enrolled_k,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 1  THEN s.ID END) AS enrolled_1,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 2  THEN s.ID END) AS enrolled_2,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 3  THEN s.ID END) AS enrolled_3,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 4  THEN s.ID END) AS enrolled_4,
-    COUNT(DISTINCT CASE WHEN s.Grade_Level = 5  THEN s.ID END) AS enrolled_5,
-    COUNT(DISTINCT s.ID) AS total_enrolled
-  FROM CC
-  JOIN Students s  ON s.ID = cc.StudentID
-  JOIN Sections se ON se.ID = cc.SectionID
-  JOIN Schools sch ON sch.School_Number = cc.SchoolID
-  JOIN CodeSet cs  ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND cs.Code = 'ELEM'
-  WHERE cc.TermId = 3500
-    AND se.External_Expression = 'AM-PM(A)'
-    AND s.Grade_Level IN (-1,0,1,2,3,4,5)
-    AND s.Enroll_Status = 0
-  GROUP BY GROUPING SETS ( (sch.School_Number, sch.Name), () )
-  ORDER BY school_id NULLS LAST;]
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    'regular' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  WHERE cs.Code = 'ELEM'
+  AND Students.Enroll_Status = 0
+  GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
+  
+  UNION ALL
+  
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    'virtual' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  JOIN S_OK_STU_X sx ON Students.DCID = sx.StudentsDCID
+  WHERE cs.Code = 'ELEM'
+  AND Students.Enroll_Status = 0
+  AND (sx.AdmissionBasis = 'RVON' OR sx.AdmissionBasis = 'RVOFF')
+  GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
+),
+teach_prefs AS (
+  SELECT Prefs.Name AS tp_name, Prefs.Value AS teacher_count
+  FROM Prefs WHERE Prefs.Name LIKE 'teachers-rc-%'
+),
+cs_prefs AS (
+  SELECT Prefs.Name AS cs_name, Prefs.Value AS class_size
+  FROM Prefs WHERE Prefs.Name LIKE 'class-size-rc-%'
+)
+
+SELECT scd.student_count
+     , scd.grade_level
+     , scd.school_name
+     , scd.school_id
+     , scd.student_type
+     , teach_prefs.teacher_count
+     , cs_prefs.class_size
+     , TO_NUMBER(teach_prefs.teacher_count) * TO_NUMBER(cs_prefs.class_size) AS max_count
+     , (TO_NUMBER(teach_prefs.teacher_count) * TO_NUMBER(cs_prefs.class_size)) - scd.student_count AS seats_available
+FROM scd
+LEFT JOIN teach_prefs ON teach_prefs.tp_name = 'teachers-rc-' || scd.grade_level || '-' || scd.school_id
+LEFT JOIN cs_prefs ON cs_prefs.cs_name = 'class-size-rc-' || scd.grade_level
+ORDER BY scd.school_name
+]
   {
+    "student_count": "~(student_count)",
+    "grade_level": "~(grade_level)",
     "school_name": "~(school_name)",
     "school_id": "~(school_id)",
-    "enrollment": {
-      "prek": "~(enrolled_prek)",
-      "k": "~(enrolled_k)",
-      "grade_1": "~(enrolled_1)",
-      "grade_2": "~(enrolled_2)",
-      "grade_3": "~(enrolled_3)",
-      "grade_4": "~(enrolled_4)",
-      "grade_5": "~(enrolled_5)",
-      "total": "~(total_enrolled)"
-    }
+    "student_type": "~(student_type)",
+    "teacher_count": "~(teacher_count)",
+    "class_size": "~(class_size)",
+    "max_count": "~(max_count)",
+    "seats_available": "~(seats_available)"
   },
-
 [/tlist_sql]
 {}]

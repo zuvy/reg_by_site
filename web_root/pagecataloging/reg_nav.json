@@ -12,10 +12,10 @@
       
     },
     {
-      "htmlID": "nav_reg_site--elem-data",
+      "htmlID": "nav_reg_site--dist-data",
       "parentHTMLID": "navDataAndReportingReports",
       "title": "Registration by Site",
-      "pageURL": "/admin/reports/registration/elem_reg.html",
+      "pageURL": "/admin/reports/registration/dist_reg.html",
       "requiredContext": "main",
       "contextType": "main",
       "isNewTab": "true",

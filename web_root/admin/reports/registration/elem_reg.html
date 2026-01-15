@@ -4,7 +4,7 @@ TemplateName:Admin
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Registration by Site</title>
+	<title>Elementary Registration by Site</title>
 <!-- required scripts -->
 	~[wc:commonscripts] 
 <!-- Required style sheets: screen.css, and print.css --> 
@@ -21,7 +21,7 @@ TemplateName:Admin
 <body> 
 	~[wc:admin_header_css] 
      <div id="breadcrumbs"> 
- <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">System Reports</a> &gt; <a href="/admin/0_reports/registration/elem_reg.html" target="_top">Elementary Registration</a> &gt; Elementary Registration<!-- breadcrumb end -->  
+ <!-- breadcrumb start --><a href="/admin/home.html" target="_top">Start Page</a> &gt; <a href="/admin/reports/runreports.html" target="_top">System Reports</a> &gt; <a href="/admin/reports/registration/elem_reg.html" target="_top">Elementary Registration</a> &gt; Elementary Registration<!-- breadcrumb end -->  
  </div> 
 <!-- start of main menu and content --> 
 	~[wc:admin_navigation_css] 
@@ -29,26 +29,21 @@ TemplateName:Admin
 <div class="box-round" ng-cloak class="ng-cloak">
 	<div><h1 style="text-align:center">Elementary Registration</h1></div>
 <!-- start of content area --> 
-<ul class="tabs">  
-    <li>  
-        <a class="selected">Elementary Registration</a>
+<ul id="nav-secondary" class="tabs shown_tabs">  
+    <li>
+        <a href="dist_reg.html">District Registration</a>
+    </li>
+    <li class="selected">  
+        <a href="elem_reg.html">Elementary Registration</a>
     </li>
     <li> 
         <a href="sec_reg.html">Secondary Registration</a>
     </li>
     <li>
-        <a href=alt_reg.html">Alt Registration</a>
+        <a href="alt_reg.html">Alt Registration</a>
     </li>
 </ul>
-    <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="elemAppCtrl">
-        
-        <!-- Debug info -->
-        <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">
-            <h4>Debug Info:</h4>
-            <p>Message: {{message}}</p>
-            <p>Loading: {{loading}}</p>
-            <p>Data count: {{elemData.length}}</p>
-        </div>
+    <div id="main_content" data-require-path="components/registration_count/index" data-module-name="regAppModule" ng-controller="elemRegCtrl">
         
         <!-- Loading indicator -->
         <div ng-show="loading" style="text-align: center; padding: 20px;">
@@ -57,35 +52,242 @@ TemplateName:Admin
         
         <!-- Registration enrollment table -->
         <div ng-show="!loading && elemData.length > 0">
-            <h2>Elementary School Registration Report</h2>
-            <p><strong>Report Date:</strong> {{elDate}} at {{elTime}}</p>
+            <div class="button-row">
+                <button type="button" class="autoReloadPage">Refresh</button>
+            </div>
             
-            <div class="grid-container" style="margin-top: 20px;">
-                <table class="grid sortable">
+            <div class="box-round">
+                <!-- Complex capacity table matching registration.html pattern -->
+                <table border="0" cellpadding="0" cellspacing="0" class="grid" id="elementary">
                     <thead>
                         <tr>
-                            <th>School Name</th>
-                            <th>PreK</th>
-                            <th>K</th>
-                            <th>1st</th>
-                            <th>2nd</th>
-                            <th>3rd</th>
-                            <th>4th</th>
-                            <th>5th</th>
-                            <th>Total</th>
+                            <th style="filter: none;">E = Enrolled, V = Virtual<br>A = Available, M = Max</th>
+                            <th colspan="4" style="filter: none;">-2</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">-1</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">0</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">1</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">2</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">3</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">4</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="4" style="filter: none;">5</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="7" title="Concurrent or District Sped Students" style="filter: none;">Special</th>
+                            <th style="filter: none;">Total</th>
+                        </tr>
+                        <tr>
+                            <th style="filter: none;">Site</th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th style="filter: none;">E</th>
+                            <th style="filter: none;">V</th>
+                            <th style="filter: none;">A</th>
+                            <th style="filter: none;">M</th>
+                            <th style="filter: none;"></th>
+                            <th colspan="7" style="filter: none;"></th>
+                            <th style="filter: none;"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="school in elemData">
-                            <td><strong>{{school.school_name}}</strong></td>
-                            <td>{{formatNumber(school.enrollment.prek)}}</td>
-                            <td>{{formatNumber(school.enrollment.k)}}</td>
-                            <td>{{formatNumber(school.enrollment.grade_1)}}</td>
-                            <td>{{formatNumber(school.enrollment.grade_2)}}</td>
-                            <td>{{formatNumber(school.enrollment.grade_3)}}</td>
-                            <td>{{formatNumber(school.enrollment.grade_4)}}</td>
-                            <td>{{formatNumber(school.enrollment.grade_5)}}</td>
-                            <td><strong>{{formatNumber(school.enrollment.total)}}</strong></td>
+                        <!-- Spacer row -->
+                        <tr ng-repeat-start="school in elemData">
+                            <td colspan="50" style="filter: none;"></td>
+                        </tr>
+                        
+                        <!-- School data row -->
+                        <tr ng-repeat-end>
+                            <td style="filter: none;">{{school.school_name}}:</td>
+                            
+                            <!-- Grade -2 (PreK-2) -->
+                            <td style="filter: none;"><center>{{school.grades['-2'].enrolled}}</center></td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['-2'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['-2'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['-2'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade -1 (PreK) -->
+                            <td style="filter: none;"><center>{{school.grades['-1'].enrolled}}</center></td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['-1'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['-1'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['-1'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade 0 (K) -->
+                            <td ng-style="school.grades['0'].color === 'red' ? {'background-color': 'red'} : 
+                                          school.grades['0'].color === 'yellow' ? {'background-color': 'yellow'} : 
+                                          school.grades['0'].color === 'green' ? {'background-color': 'green'} : {}" 
+                                style="filter: none;">
+                                <center>
+                                    <font ng-style="school.grades['0'].color === 'red' ? {'color': 'yellow'} : 
+                                                    school.grades['0'].color === 'yellow' ? {'color': 'black'} : 
+                                                    school.grades['0'].color === 'green' ? {'color': 'white'} : {}">
+                                        <a ng-if="school.grades['0'].overflow" 
+                                           href="./overflow.html?gr=0&sc={{school.school_id}}" 
+                                           ng-style="school.grades['0'].color === 'red' ? {'color': 'yellow'} : {}" 
+                                           target="_blank">{{school.grades['0'].enrolled}}</a>
+                                        <span ng-if="!school.grades['0'].overflow">{{school.grades['0'].enrolled}}</span>
+                                    </font>
+                                </center>
+                            </td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['0'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['0'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['0'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade 1 -->
+                            <td ng-style="school.grades['1'].color === 'red' ? {'background-color': 'red'} : 
+                                          school.grades['1'].color === 'yellow' ? {'background-color': 'yellow'} : 
+                                          school.grades['1'].color === 'green' ? {'background-color': 'green'} : {}" 
+                                style="filter: none;">
+                                <center>
+                                    <font ng-style="school.grades['1'].color === 'red' ? {'color': 'yellow'} : 
+                                                    school.grades['1'].color === 'yellow' ? {'color': 'black'} : 
+                                                    school.grades['1'].color === 'green' ? {'color': 'white'} : {}">
+                                        <a ng-if="school.grades['1'].overflow" 
+                                           href="./overflow.html?gr=1&sc={{school.school_id}}" 
+                                           ng-style="school.grades['1'].color === 'red' ? {'color': 'yellow'} : {}" 
+                                           target="_blank">{{school.grades['1'].enrolled}}</a>
+                                        <span ng-if="!school.grades['1'].overflow">{{school.grades['1'].enrolled}}</span>
+                                    </font>
+                                </center>
+                            </td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['1'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['1'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['1'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade 2 -->
+                            <td ng-style="school.grades['2'].color === 'red' ? {'background-color': 'red'} : 
+                                          school.grades['2'].color === 'yellow' ? {'background-color': 'yellow'} : 
+                                          school.grades['2'].color === 'green' ? {'background-color': 'green'} : {}" 
+                                style="filter: none;">
+                                <center>
+                                    <font ng-style="school.grades['2'].color === 'red' ? {'color': 'yellow'} : 
+                                                    school.grades['2'].color === 'yellow' ? {'color': 'black'} : 
+                                                    school.grades['2'].color === 'green' ? {'color': 'white'} : {}">
+                                        <a ng-if="school.grades['2'].overflow" 
+                                           href="./overflow.html?gr=2&sc={{school.school_id}}" 
+                                           ng-style="school.grades['2'].color === 'red' ? {'color': 'yellow'} : {}" 
+                                           target="_blank">{{school.grades['2'].enrolled}}</a>
+                                        <span ng-if="!school.grades['2'].overflow">{{school.grades['2'].enrolled}}</span>
+                                    </font>
+                                </center>
+                            </td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['2'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['2'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['2'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade 3 -->
+                            <td ng-style="school.grades['3'].color === 'red' ? {'background-color': 'red'} : 
+                                          school.grades['3'].color === 'yellow' ? {'background-color': 'yellow'} : 
+                                          school.grades['3'].color === 'green' ? {'background-color': 'green'} : {}" 
+                                style="filter: none;">
+                                <center>
+                                    <font ng-style="school.grades['3'].color === 'red' ? {'color': 'yellow'} : 
+                                                    school.grades['3'].color === 'yellow' ? {'color': 'black'} : 
+                                                    school.grades['3'].color === 'green' ? {'color': 'white'} : {}">
+                                        <a ng-if="school.grades['3'].overflow" 
+                                           href="./overflow.html?gr=3&sc={{school.school_id}}" 
+                                           ng-style="school.grades['3'].color === 'red' ? {'color': 'yellow'} : {}" 
+                                           target="_blank">{{school.grades['3'].enrolled}}</a>
+                                        <span ng-if="!school.grades['3'].overflow">{{school.grades['3'].enrolled}}</span>
+                                    </font>
+                                </center>
+                            </td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['3'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['3'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['3'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade 4 -->
+                            <td ng-style="school.grades['4'].color === 'red' ? {'background-color': 'red'} : 
+                                          school.grades['4'].color === 'yellow' ? {'background-color': 'yellow'} : 
+                                          school.grades['4'].color === 'green' ? {'background-color': 'green'} : {}" 
+                                style="filter: none;">
+                                <center>
+                                    <font ng-style="school.grades['4'].color === 'red' ? {'color': 'yellow'} : 
+                                                    school.grades['4'].color === 'yellow' ? {'color': 'black'} : 
+                                                    school.grades['4'].color === 'green' ? {'color': 'white'} : {}">
+                                        <a ng-if="school.grades['4'].overflow" 
+                                           href="./overflow.html?gr=4&sc={{school.school_id}}" 
+                                           ng-style="school.grades['4'].color === 'red' ? {'color': 'yellow'} : {}" 
+                                           target="_blank">{{school.grades['4'].enrolled}}</a>
+                                        <span ng-if="!school.grades['4'].overflow">{{school.grades['4'].enrolled}}</span>
+                                    </font>
+                                </center>
+                            </td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['4'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['4'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['4'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Grade 5 -->
+                            <td ng-style="school.grades['5'].color === 'red' ? {'background-color': 'red'} : 
+                                          school.grades['5'].color === 'yellow' ? {'background-color': 'yellow'} : 
+                                          school.grades['5'].color === 'green' ? {'background-color': 'green'} : {}" 
+                                style="filter: none;">
+                                <center>
+                                    <font ng-style="school.grades['5'].color === 'red' ? {'color': 'yellow'} : 
+                                                    school.grades['5'].color === 'yellow' ? {'color': 'black'} : 
+                                                    school.grades['5'].color === 'green' ? {'color': 'white'} : {}">
+                                        <a ng-if="school.grades['5'].overflow" 
+                                           href="./overflow.html?gr=5&sc={{school.school_id}}" 
+                                           ng-style="school.grades['5'].color === 'red' ? {'color': 'yellow'} : {}" 
+                                           target="_blank">{{school.grades['5'].enrolled}}</a>
+                                        <span ng-if="!school.grades['5'].overflow">{{school.grades['5'].enrolled}}</span>
+                                    </font>
+                                </center>
+                            </td>
+                            <td style="filter: none;"><center><font color="#02bd02">{{school.grades['5'].virtual}}</font></center></td>
+                            <td style="filter: none;"><center>{{school.grades['5'].available}}</center></td>
+                            <td style="filter: none;"><center>{{school.grades['5'].max}}</center></td>
+                            <td style="filter: none;"></td>
+                            
+                            <!-- Special/SPED column -->
+                            <td colspan="7" style="filter: none;"><center>0</center></td>
+                            
+                            <!-- Total -->
+                            <td style="filter: none;"><center>{{school.enrollment.total}}</center></td>
                         </tr>
                     </tbody>
                 </table>
@@ -94,40 +296,14 @@ TemplateName:Admin
         
         <!-- No data message -->
         <div ng-show="!loading && elemData.length === 0" style="text-align: center; padding: 20px;">
-            <p>No elementary registration data available. Please check that teacher capacity settings have been configured.</p>
-            <p><a href="../district/reg_site_settings.html" class="button">Configure Settings</a></p>
+            <p>No elementary registration data available.</p>
         </div>
     </div>
 
-    <!-- Add custom styles for the report -->
+    <!-- Add minimal custom styles -->
     <style>
-        .grid-container { overflow-x: auto; }
-        .grid th { font-size: 11px; padding: 4px; text-align: center; }
-        .grid td { font-size: 12px; padding: 4px; text-align: center; }
-        .grid td.enrolled { background-color: #e3f2fd; }
-        .grid td.capacity { background-color: #f3e5f5; }
-        .grid td.available.has-seats { background-color: #e8f5e8; color: #2e7d32; }
-        .grid td.available.no-seats { background-color: #ffebee; color: #c62828; }
-        .grid td.total { font-weight: bold; border-left: 2px solid #666; }
-        
-        .status-badge { 
-            display: inline-block; 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-size: 10px; 
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .over-capacity { background-color: #ffcdd2; color: #c62828; }
-        .near-capacity { background-color: #fff3e0; color: #ef6c00; }
-        .good-capacity { background-color: #dcedc8; color: #388e3c; }
-        .under-capacity { background-color: #e1f5fe; color: #0277bd; }
-        
-        .over-capacity .status-badge { background-color: #f44336; color: white; }
-        .near-capacity .status-badge { background-color: #ff9800; color: white; }
-        .good-capacity .status-badge { background-color: #4caf50; color: white; }
-        .under-capacity .status-badge { background-color: #2196f3; color: white; }
+        .grid th { text-align: center; }
+        .grid td { text-align: left; }
     </style>
 
     </div>
