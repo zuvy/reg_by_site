@@ -12,7 +12,7 @@ define(function(require) {
 		$scope.site = $attrs.ngSite;
 		$scope.g_num = $attrs.ngGrade;
 		
-		// Student to teacher ratios by grade level
+		// Number of students per teacher by grade level
 		$scope.studentTeacherRatios = {
 			'-2': 23,  // PreK-2
 			'-1': 23,  // PreK
