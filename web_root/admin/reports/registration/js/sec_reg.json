@@ -1,0 +1,50 @@
+[
+~[tlist_sql;
+WITH scd AS (
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    cs.Code school_type,
+    'regular' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  WHERE cs.Code IN ('HIGH', 'MID')
+  AND Students.Enroll_Status = 0
+  GROUP BY sch.Name, sch.School_Number, cs.Code, Students.Grade_Level
+
+  UNION ALL
+
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    cs.Code school_type,
+    'virtual' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  JOIN S_OK_STU_X sx ON Students.DCID = sx.StudentsDCID
+  WHERE cs.Code IN ('HIGH', 'MID')
+  AND Students.Enroll_Status = 0
+  AND (sx.AdmissionBasis = 'RVON' OR sx.AdmissionBasis = 'RVOFF')
+  GROUP BY sch.Name, sch.School_Number, cs.Code, Students.Grade_Level
+)
+SELECT scd.student_count, scd.grade_level, scd.school_name,
+       scd.school_id, scd.school_type, scd.student_type
+FROM scd
+ORDER BY scd.school_type DESC, scd.school_name
+]
+  {
+    "student_count": "~(student_count)",
+    "grade_level": "~(grade_level)",
+    "school_name": "~(school_name)",
+    "school_id": "~(school_id)",
+    "school_type": "~(school_type)",
+    "student_type": "~(student_type)"
+  },
+[/tlist_sql]
+{}]

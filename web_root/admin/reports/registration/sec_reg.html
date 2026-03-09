@@ -43,12 +43,134 @@ TemplateName:Admin
         <a href="alt_reg.html">Alt Registration</a>
     </li>
 </ul>
-  <div>
-    <h2>Secondary Registration</h2>
-  </div>
-       
+    <div id="main_content"
+         data-require-path="components/registration_count/index"
+         data-module-name="regAppModule"
+         ng-controller="secRegCtrl">
 
-	
+        <!-- Loading indicator -->
+        <div ng-show="loading" style="text-align:center; padding:20px;">
+            <p>Loading secondary registration data...</p>
+        </div>
+
+        <!-- No data message -->
+        <div ng-show="!loading && secData.length === 0" style="text-align:center; padding:20px;">
+            <p>No secondary registration data available.</p>
+        </div>
+
+        <!-- Registration enrollment tables -->
+        <div ng-show="!loading && secData.length > 0">
+            <div class="button-row">
+                <button type="button" class="autoReloadPage">Refresh</button>
+            </div>
+
+            <div class="box-round">
+
+                <!-- High Schools -->
+                <h3 style="text-align:center;">High Schools</h3>
+                <table border="0" cellpadding="0" cellspacing="0" class="grid" id="highSchools">
+                    <caption>Numbers reflect active enrolled students and do not include inactive students.</caption>
+                    <thead>
+                        <tr>
+                            <th colspan="6" style="filter:none;">
+                                <center>
+                                    Black = Total &nbsp;
+                                    <font color="#004ef5">Blue = Traditional</font> &nbsp;
+                                    <font color="#02bd02">Green = Virtual</font>
+                                </center>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="filter:none;">Site</th>
+                            <th style="filter:none;">9</th>
+                            <th style="filter:none;">10</th>
+                            <th style="filter:none;">11</th>
+                            <th style="filter:none;">12</th>
+                            <th style="filter:none;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="school in secData | filter:{school_type:'HIGH'} | orderBy:'school_name'">
+                            <td style="filter:none;">{{school.school_name}}:</td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,9)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,9)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,9)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,10)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,10)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,10)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,11)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,11)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,11)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,12)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,12)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,12)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getTotal(school)}}<br>
+                                <font color="#004ef5">{{getTotalTraditional(school)}}</font><b>/</b><font color="#02bd02">{{getTotalVirtual(school)}}</font>
+                            </center></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Middle Schools -->
+                <h3 style="text-align:center; margin-top:20px;">Middle Schools</h3>
+                <table border="0" cellpadding="0" cellspacing="0" class="grid" id="midSchools">
+                    <thead>
+                        <tr>
+                            <th colspan="5" style="filter:none;">
+                                <center>
+                                    Black = Total &nbsp;
+                                    <font color="#004ef5">Blue = Traditional</font> &nbsp;
+                                    <font color="#02bd02">Green = Virtual</font>
+                                </center>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th style="filter:none;">Site</th>
+                            <th style="filter:none;">6</th>
+                            <th style="filter:none;">7</th>
+                            <th style="filter:none;">8</th>
+                            <th style="filter:none;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="school in secData | filter:{school_type:'MID'} | orderBy:'school_name'">
+                            <td style="filter:none;">{{school.school_name}}:</td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,6)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,6)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,6)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,7)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,7)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,7)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getEnrolled(school,8)}}<br>
+                                <font color="#004ef5">{{getTraditional(school,8)}}</font><b>/</b><font color="#02bd02">{{getVirtual(school,8)}}</font>
+                            </center></td>
+                            <td style="filter:none;"><center>
+                                {{getTotal(school)}}<br>
+                                <font color="#004ef5">{{getTotalTraditional(school)}}</font><b>/</b><font color="#02bd02">{{getTotalVirtual(school)}}</font>
+                            </center></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .grid th { text-align: center; }
+        .grid td { text-align: left; }
+    </style>
+
+
 <!-- end of content area --> 
 	~[wc:admin_footer_css] 
 </body> 
