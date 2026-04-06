@@ -17,5 +17,3 @@ Install the plugin ZIP file using the Plugin Dashboard.
 Navigate to **Data and Reporting → Reports → Registration By Site** and select **Elementary**
 
 ---
-
-### Docs
