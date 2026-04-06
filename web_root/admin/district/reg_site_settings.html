@@ -48,7 +48,7 @@ TemplateName:Admin
       <p>Set the number of teachers for each grade level at each elementary school.</p>
 
       <div class="grid-container">
-        <table class="grid sortable">
+        <table class="grid">
           <thead>
             <tr>
               <th>School Name</th>
@@ -129,7 +129,7 @@ TemplateName:Admin
                 <button type="button" onclick="clearTeacherCounts()">Clear Teacher Counts</button>
               </td>
             </tr>
-            <tr id="default-teachers-row">
+            <tr id="default-teachers-row" style="border-bottom: 8px solid #92aed1;">
               <td>Default Teachers</td>
               <td>
                 <input type="number"
@@ -196,7 +196,7 @@ TemplateName:Admin
             WHERE sch.State_Excludefromreporting = 0
             ORDER BY sch.Name;]
             <tr id="teachers-row-~(school_id)">
-              <td><strong>~(school_name)</strong></td>
+              <td><strong>~(school_id) ~(school_name)</strong></td>
               <td>
                 <input type="number"
                   name="[pref]teachers-rc--2-~(school_id)"
