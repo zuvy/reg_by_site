@@ -4,6 +4,5 @@ define(function(require) {
     require('components/registration_count/controllers/distctrl');
     require('components/registration_count/controllers/elemregctrl');
     require('components/registration_count/controllers/secregctrl');
-    require('components/registration_count/controllers/settingsctrl');
     require('components/registration_count/controllers/testctrl');
 });
