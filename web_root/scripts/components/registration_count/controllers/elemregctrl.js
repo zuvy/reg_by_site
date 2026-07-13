@@ -25,12 +25,16 @@ define(function(require) {
 		};
 		
 		// Calculate capacity status for a grade
-		$scope.calculateGradeStatus = function(enrolled, virtual, teachers, gradeLevel) {
+		$scope.calculateGradeStatus = function(enrolled, virtual, teachers, gradeLevel, maxOverride) {
 			var numTeachers = parseInt(teachers) || 0;
 			var numStudents = parseInt(enrolled) || 0;
 			var numVirtual = parseInt(virtual) || 0;
 			var ratio = $scope.studentTeacherRatios[gradeLevel] || 24;
-			var maxStudents = numTeachers * ratio;
+			// Prefer the pref-driven max from SQL (teachers * class size + asst teachers * asst size);
+			// fall back to the hardcoded ratio when prefs are not set for this school/grade
+			var maxStudents = (maxOverride !== undefined && maxOverride !== null && maxOverride !== '')
+				? (parseInt(maxOverride) || 0)
+				: numTeachers * ratio;
 			var available = maxStudents - numStudents;
 			
 			var status = {
@@ -61,14 +65,14 @@ define(function(require) {
 		// Process school data with capacity calculations
 		$scope.processSchoolData = function(school) {
 			school.grades = {
-				'-2': $scope.calculateGradeStatus(school.enrollment.prek2, school.virtual.prek2, school.teachers.prek2, '-2'),
-				'-1': $scope.calculateGradeStatus(school.enrollment.prek, school.virtual.prek, school.teachers.prek, '-1'),
-				'0': $scope.calculateGradeStatus(school.enrollment.k, school.virtual.k, school.teachers.k, '0'),
-				'1': $scope.calculateGradeStatus(school.enrollment.grade_1, school.virtual.grade_1, school.teachers.grade_1, '1'),
-				'2': $scope.calculateGradeStatus(school.enrollment.grade_2, school.virtual.grade_2, school.teachers.grade_2, '2'),
-				'3': $scope.calculateGradeStatus(school.enrollment.grade_3, school.virtual.grade_3, school.teachers.grade_3, '3'),
-				'4': $scope.calculateGradeStatus(school.enrollment.grade_4, school.virtual.grade_4, school.teachers.grade_4, '4'),
-				'5': $scope.calculateGradeStatus(school.enrollment.grade_5, school.virtual.grade_5, school.teachers.grade_5, '5')
+				'-2': $scope.calculateGradeStatus(school.enrollment.prek2, school.virtual.prek2, school.teachers.prek2, '-2', school.maxes.prek2),
+				'-1': $scope.calculateGradeStatus(school.enrollment.prek, school.virtual.prek, school.teachers.prek, '-1', school.maxes.prek),
+				'0': $scope.calculateGradeStatus(school.enrollment.k, school.virtual.k, school.teachers.k, '0', school.maxes.k),
+				'1': $scope.calculateGradeStatus(school.enrollment.grade_1, school.virtual.grade_1, school.teachers.grade_1, '1', school.maxes.grade_1),
+				'2': $scope.calculateGradeStatus(school.enrollment.grade_2, school.virtual.grade_2, school.teachers.grade_2, '2', school.maxes.grade_2),
+				'3': $scope.calculateGradeStatus(school.enrollment.grade_3, school.virtual.grade_3, school.teachers.grade_3, '3', school.maxes.grade_3),
+				'4': $scope.calculateGradeStatus(school.enrollment.grade_4, school.virtual.grade_4, school.teachers.grade_4, '4', school.maxes.grade_4),
+				'5': $scope.calculateGradeStatus(school.enrollment.grade_5, school.virtual.grade_5, school.teachers.grade_5, '5', school.maxes.grade_5)
 			};
 			return school;
 		};
@@ -107,11 +111,23 @@ define(function(require) {
 							school_id: row.school_id,
 							enrollment: { prek: 0, k: 0, grade_1: 0, grade_2: 0, grade_3: 0, grade_4: 0, grade_5: 0 },
 							virtual: { prek: 0, k: 0, grade_1: 0, grade_2: 0, grade_3: 0, grade_4: 0, grade_5: 0 },
-							teachers: { prek: 0, k: 0, grade_1: 0, grade_2: 0, grade_3: 0, grade_4: 0, grade_5: 0 }
+							teachers: { prek: 0, k: 0, grade_1: 0, grade_2: 0, grade_3: 0, grade_4: 0, grade_5: 0 },
+							maxes: {},
+							boaExcluded: 0,
+							specialExcluded: 0
 						};
 					}
-					
+
 					var school = schoolsMap[schoolId];
+
+					if (row.student_type === 'boa_excluded') {
+						school.boaExcluded += parseInt(row.student_count) || 0;
+						return;
+					}
+					if (row.student_type === 'special_excluded') {
+						school.specialExcluded += parseInt(row.student_count) || 0;
+						return;
+					}
 					var gradeKey = {
 						'-1': 'prek',
 						'0': 'k',
@@ -129,6 +145,9 @@ define(function(require) {
 							school.virtual[gradeKey] = row.student_count || 0;
 						}
 						school.teachers[gradeKey] = row.teacher_count || 0;
+						if (row.max_count !== undefined && row.max_count !== null && row.max_count !== '') {
+							school.maxes[gradeKey] = row.max_count;
+						}
 					}
 				});
 				

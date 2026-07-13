@@ -123,6 +123,65 @@ TemplateName:Admin
               </td>
             </tr>
             <tr>
+              <td>Asst. Teacher Size</td>
+              <td>
+              <input type="number"
+                name="[pref]asst-size-rc--2"
+                value="~[displaypref:asst-size-rc--2;]"
+                min="0" max="40"
+                style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc--1"
+                  value="~[displaypref:asst-size-rc--1;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc-0"
+                  value="~[displaypref:asst-size-rc-0;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc-1"
+                  value="~[displaypref:asst-size-rc-1;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc-2"
+                  value="~[displaypref:asst-size-rc-2;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc-3"
+                  value="~[displaypref:asst-size-rc-3;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc-4"
+                  value="~[displaypref:asst-size-rc-4;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+              <td>
+                <input type="number"
+                  name="[pref]asst-size-rc-5"
+                  value="~[displaypref:asst-size-rc-5;]"
+                  min="0" max="40"
+                  style="width: 50px;" />
+              </td>
+            </tr>
+            <tr>
               <td colspan="9" style="padding: 6px 4px;">
                 <button type="button" onclick="populateTeacherCounts()">Populate Teacher Counts</button>
                 &nbsp;
@@ -192,7 +251,7 @@ TemplateName:Admin
             SELECT sch.School_Number AS school_id
               , sch.Name AS school_name
             FROM Schools sch
-            JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND cs.Code = 'ELEM'
+            JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID AND (cs.Code = 'ELEM' OR (cs.Code = 'SP FAC' AND sch.Low_Grade <= 5))
             WHERE sch.State_Excludefromreporting = 0
             ORDER BY sch.Name;]
             <tr id="teachers-row-~(school_id)">
@@ -317,6 +376,46 @@ TemplateName:Admin
           </tbody>
         </table>
     </div>
+    <h2>Basis of Admission Exclusions</h2>
+    <p>Students with any selected Admission Basis code are excluded from grade-level enrollment counts. The excluded total appears in the "BOA Excluded" column on the Elementary Registration report.</p>
+
+    <select id="boaExclusionMultiSelect" size="10" multiple="multiple" style="min-width: 200px;">
+      ~[tlist_sql;
+      SELECT DISTINCT sx.AdmissionBasis
+      FROM S_OK_STU_X sx
+      WHERE sx.AdmissionBasis IS NOT NULL
+      ORDER BY sx.AdmissionBasis;]
+      <option value="~(admissionbasis)">~(admissionbasis)</option>
+      [/tlist_sql]
+    </select>
+
+    <input type="hidden" name="[pref]boa-exclusion-codes" id="boaExclusionCodes"
+      value="~[displaypref:boa-exclusion-codes;]">
+
+    <h2>Special Exclusion Field</h2>
+    <p>Enter a table (Students or a one-to-one Students extension table) and field. Students where this field is not null/empty are excluded from grade-level counts and totaled in the "Special" column on the Elementary Registration report.</p>
+
+    <p>
+      <label>Table:
+        <input type="text" name="[pref]special-exclusion-table" id="specialExclusionTable"
+          value="~[displaypref:special-exclusion-table;]" placeholder="e.g. S_OK_STU_X">
+      </label>
+      &nbsp;
+      <label>Field:
+        <input type="text" name="[pref]special-exclusion-field" id="specialExclusionField"
+          value="~[displaypref:special-exclusion-field;]" placeholder="e.g. AdmissionBasis">
+      </label>
+    </p>
+    <p>
+      <label>Test Student Number:
+        <input type="text" id="testStudentNumber" placeholder="e.g. 123456" style="width: 120px;">
+      </label>
+      &nbsp;
+      <button type="button" onclick="validateExclusionField()">Validate</button>
+      &nbsp;
+      <span id="exclusionValidationResult"></span>
+    </p>
+
 	<div class="button-row">
 	  <input type="hidden" name="ac" value="prim">
 	  ~[submitbutton]
@@ -352,6 +451,55 @@ TemplateName:Admin
     $('[id^="teachers-row-"]').each(function () {
       $(this).find('input').val('');
     });
+  };
+
+  // BOA exclusion multi-select <-> hidden CSV pref field sync
+  var $boa_select = $('#boaExclusionMultiSelect');
+  var $boa_codes = $('#boaExclusionCodes');
+
+  // On load: pre-select options present in the saved CSV
+  var saved_codes = ($boa_codes.val() || '').split(',');
+  $boa_select.find('option').each(function () {
+    if (saved_codes.indexOf(this.value) !== -1) this.selected = true;
+  });
+
+  // On change: write selected options back to the hidden field as CSV
+  $boa_select.on('change', function () {
+    var selected = [];
+    $boa_select.find('option:selected').each(function () {
+      selected.push(this.value);
+    });
+    $boa_codes.val(selected.join(','));
+  });
+
+  window.validateExclusionField = function () {
+    var tbl = $('#specialExclusionTable').val();
+    var fld = $('#specialExclusionField').val();
+    var stunum = $('#testStudentNumber').val();
+    var $result = $('#exclusionValidationResult');
+
+    if (!tbl || !fld || !stunum) {
+      $result.css('color', 'red').text('Enter a table, field, and test student number.');
+      return;
+    }
+
+    $result.css('color', '#555').text('Validating...');
+    $.getJSON('js/validate_exclusion.json', { tbl: tbl, fld: fld, stunum: stunum })
+      .done(function (data) {
+        var row = (data && data.length) ? data[0] : {};
+        if (!(parseInt(row.field_exists, 10) > 0)) {
+          $result.css('color', 'red').text('Table or field not found.');
+        } else if (tbl.toUpperCase() !== 'STUDENTS' && !(parseInt(row.has_studentsdcid, 10) > 0)) {
+          $result.css('color', 'red').text('Table is not a Students extension table (no StudentsDCID column).');
+        } else if (!(parseInt(row.student_exists, 10) > 0)) {
+          $result.css('color', 'red').text('Student number not found.');
+        } else {
+          $result.css('color', 'green').text('Valid — table and field exist.');
+        }
+      })
+      .fail(function () {
+        $result.css('color', 'red').text('Validation request failed.');
+      });
   };
 }($j));
 </script>

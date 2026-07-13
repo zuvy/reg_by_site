@@ -1,6 +1,14 @@
 [
 ~[tlist_sql;
-WITH scd AS (
+WITH excl_prefs AS (
+  SELECT
+    NVL((SELECT MAX(',' || DBMS_LOB.SUBSTR(Value, 4000, 1) || ',') FROM Prefs WHERE Name = 'boa-exclusion-codes'), ',,') AS boa_csv,
+    CASE WHEN EXISTS (SELECT 1 FROM Prefs WHERE Name = 'special-exclusion-table' AND DBMS_LOB.GETLENGTH(Value) > 0)
+          AND EXISTS (SELECT 1 FROM Prefs WHERE Name = 'special-exclusion-field' AND DBMS_LOB.GETLENGTH(Value) > 0)
+         THEN 1 ELSE 0 END AS special_configured
+  FROM dual
+),
+scd AS (
   SELECT
     Count(Students.DCID) student_count,
     Students.Grade_Level grade_level,
@@ -10,12 +18,24 @@ WITH scd AS (
   FROM Schools sch
   JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
   JOIN Students ON Students.SchoolID = sch.School_Number
-  WHERE cs.Code = 'ELEM'
+  WHERE (cs.Code = 'ELEM' OR (cs.Code = 'SP FAC' AND sch.Low_Grade <= 5))
   AND Students.Enroll_Status = 0
+  AND NOT EXISTS (
+    SELECT 1 FROM S_OK_STU_X bx, excl_prefs ep
+    WHERE bx.StudentsDCID = Students.DCID
+      AND INSTR(ep.boa_csv, ',' || bx.AdmissionBasis || ',') > 0
+  )
+  AND NOT EXISTS (
+    SELECT 1 FROM ~[displaypref:special-exclusion-table;S_OK_STU_X] ex, excl_prefs ep
+    WHERE ep.special_configured = 1
+      AND ex.StudentsDCID = Students.DCID
+      AND ex.~[displaypref:special-exclusion-field;StudentsDCID] IS NOT NULL
+      AND UPPER(TRIM(ex.~[displaypref:special-exclusion-field;StudentsDCID])) NOT IN ('NO', 'N', '0', 'FALSE')
+  )
   GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
-  
+
   UNION ALL
-  
+
   SELECT
     Count(Students.DCID) student_count,
     Students.Grade_Level grade_level,
@@ -26,9 +46,58 @@ WITH scd AS (
   JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
   JOIN Students ON Students.SchoolID = sch.School_Number
   JOIN S_OK_STU_X sx ON Students.DCID = sx.StudentsDCID
-  WHERE cs.Code = 'ELEM'
+  WHERE (cs.Code = 'ELEM' OR (cs.Code = 'SP FAC' AND sch.Low_Grade <= 5))
   AND Students.Enroll_Status = 0
   AND (sx.AdmissionBasis = 'RVON' OR sx.AdmissionBasis = 'RVOFF')
+  AND NOT EXISTS (
+    SELECT 1 FROM excl_prefs ep
+    WHERE INSTR(ep.boa_csv, ',' || sx.AdmissionBasis || ',') > 0
+  )
+  AND NOT EXISTS (
+    SELECT 1 FROM ~[displaypref:special-exclusion-table;S_OK_STU_X] ex, excl_prefs ep
+    WHERE ep.special_configured = 1
+      AND ex.StudentsDCID = Students.DCID
+      AND ex.~[displaypref:special-exclusion-field;StudentsDCID] IS NOT NULL
+      AND UPPER(TRIM(ex.~[displaypref:special-exclusion-field;StudentsDCID])) NOT IN ('NO', 'N', '0', 'FALSE')
+  )
+  GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
+
+  UNION ALL
+
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    'boa_excluded' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  JOIN S_OK_STU_X sx ON Students.DCID = sx.StudentsDCID
+  CROSS JOIN excl_prefs ep
+  WHERE (cs.Code = 'ELEM' OR (cs.Code = 'SP FAC' AND sch.Low_Grade <= 5))
+  AND Students.Enroll_Status = 0
+  AND INSTR(ep.boa_csv, ',' || sx.AdmissionBasis || ',') > 0
+  GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
+
+  UNION ALL
+
+  SELECT
+    Count(Students.DCID) student_count,
+    Students.Grade_Level grade_level,
+    sch.Name school_name,
+    sch.School_Number school_id,
+    'special_excluded' student_type
+  FROM Schools sch
+  JOIN CodeSet cs ON cs.CodeSetID = sch.SchoolCategoryCodeSetID
+  JOIN Students ON Students.SchoolID = sch.School_Number
+  JOIN ~[displaypref:special-exclusion-table;S_OK_STU_X] ex ON ex.StudentsDCID = Students.DCID
+  CROSS JOIN excl_prefs ep
+  WHERE (cs.Code = 'ELEM' OR (cs.Code = 'SP FAC' AND sch.Low_Grade <= 5))
+  AND Students.Enroll_Status = 0
+  AND ep.special_configured = 1
+  AND ex.~[displaypref:special-exclusion-field;StudentsDCID] IS NOT NULL
+  AND UPPER(TRIM(ex.~[displaypref:special-exclusion-field;StudentsDCID])) NOT IN ('NO', 'N', '0', 'FALSE')
   GROUP BY sch.Name, sch.School_Number, Students.Grade_Level
 ),
 teach_prefs AS (
@@ -38,6 +107,14 @@ teach_prefs AS (
 cs_prefs AS (
   SELECT Prefs.Name AS cs_name, Prefs.Value AS class_size
   FROM Prefs WHERE Prefs.Name LIKE 'class-size-rc-%'
+),
+asst_teach_prefs AS (
+  SELECT Prefs.Name AS ap_name, DBMS_LOB.SUBSTR(Prefs.Value, 100, 1) AS asst_count
+  FROM Prefs WHERE Prefs.Name LIKE 'asst-teachers-rc-%'
+),
+asst_size_prefs AS (
+  SELECT Prefs.Name AS as_name, DBMS_LOB.SUBSTR(Prefs.Value, 100, 1) AS asst_size
+  FROM Prefs WHERE Prefs.Name LIKE 'asst-size-rc-%'
 )
 
 SELECT scd.student_count
@@ -47,11 +124,20 @@ SELECT scd.student_count
      , scd.student_type
      , teach_prefs.teacher_count
      , cs_prefs.class_size
-     , TO_NUMBER(teach_prefs.teacher_count) * TO_NUMBER(cs_prefs.class_size) AS max_count
-     , (TO_NUMBER(teach_prefs.teacher_count) * TO_NUMBER(cs_prefs.class_size)) - scd.student_count AS seats_available
+     , CASE WHEN teach_prefs.teacher_count IS NULL AND asst_teach_prefs.asst_count IS NULL THEN NULL
+            ELSE NVL(TO_NUMBER(teach_prefs.teacher_count), 0) * NVL(TO_NUMBER(cs_prefs.class_size), 0)
+               + NVL(TO_NUMBER(asst_teach_prefs.asst_count), 0) * NVL(TO_NUMBER(asst_size_prefs.asst_size), 0)
+       END AS max_count
+     , CASE WHEN teach_prefs.teacher_count IS NULL AND asst_teach_prefs.asst_count IS NULL THEN NULL
+            ELSE NVL(TO_NUMBER(teach_prefs.teacher_count), 0) * NVL(TO_NUMBER(cs_prefs.class_size), 0)
+               + NVL(TO_NUMBER(asst_teach_prefs.asst_count), 0) * NVL(TO_NUMBER(asst_size_prefs.asst_size), 0)
+               - scd.student_count
+       END AS seats_available
 FROM scd
 LEFT JOIN teach_prefs ON teach_prefs.tp_name = 'teachers-rc-' || scd.grade_level || '-' || scd.school_id
 LEFT JOIN cs_prefs ON cs_prefs.cs_name = 'class-size-rc-' || scd.grade_level
+LEFT JOIN asst_teach_prefs ON asst_teach_prefs.ap_name = 'asst-teachers-rc-' || scd.grade_level || '-' || scd.school_id
+LEFT JOIN asst_size_prefs ON asst_size_prefs.as_name = 'asst-size-rc-' || scd.grade_level
 ORDER BY scd.school_name
 ]
   {
