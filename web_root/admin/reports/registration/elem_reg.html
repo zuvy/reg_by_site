@@ -78,7 +78,8 @@ TemplateName:Admin
                             <th style="filter: none;"></th>
                             <th colspan="4" style="filter: none;">5</th>
                             <th style="filter: none;"></th>
-                            <th colspan="7" title="Concurrent or District Sped Students" style="filter: none;">Special</th>
+                            <th title="Excluded by Basis of Admission" style="filter: none;">BOA<br>Excluded</th>
+                            <th colspan="7" title="Concurrent or District Sped Students" style="filter: none;">Remote Excludes</th>
                             <th style="filter: none;">Total</th>
                         </tr>
                         <tr>
@@ -123,6 +124,7 @@ TemplateName:Admin
                             <th style="filter: none;">A</th>
                             <th style="filter: none;">M</th>
                             <th style="filter: none;"></th>
+                            <th style="filter: none;"></th>
                             <th colspan="7" style="filter: none;"></th>
                             <th style="filter: none;"></th>
                         </tr>
@@ -130,7 +132,7 @@ TemplateName:Admin
                     <tbody>
                         <!-- Spacer row -->
                         <tr ng-repeat-start="school in elemData">
-                            <td colspan="50" style="filter: none;"></td>
+                            <td colspan="51" style="filter: none;"></td>
                         </tr>
                         
                         <!-- School data row -->
@@ -282,9 +284,12 @@ TemplateName:Admin
                             <td style="filter: none;"><center>{{school.grades['5'].available}}</center></td>
                             <td style="filter: none;"><center>{{school.grades['5'].max}}</center></td>
                             <td style="filter: none;"></td>
-                            
+
+                            <!-- BOA Excluded column -->
+                            <td style="filter: none;"><center>{{school.boaExcluded}}</center></td>
+
                             <!-- Special/SPED column -->
-                            <td colspan="7" style="filter: none;"><center>0</center></td>
+                            <td colspan="7" style="filter: none;"><center>{{school.specialExcluded}}</center></td>
                             
                             <!-- Total -->
                             <td style="filter: none;"><center>{{school.enrollment.total}}</center></td>

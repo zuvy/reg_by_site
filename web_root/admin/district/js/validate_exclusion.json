@@ -1,0 +1,19 @@
+[
+~[tlist_sql;
+SELECT
+  (SELECT COUNT(*) FROM ALL_TAB_COLUMNS
+    WHERE UPPER(table_name)  = UPPER('~(gpv.tbl)')
+      AND UPPER(column_name) = UPPER('~(gpv.fld)')) AS field_exists,
+  (SELECT COUNT(*) FROM ALL_TAB_COLUMNS
+    WHERE UPPER(table_name)  = UPPER('~(gpv.tbl)')
+      AND UPPER(column_name) = 'STUDENTSDCID') AS has_studentsdcid,
+  (SELECT COUNT(*) FROM Students
+    WHERE Student_Number = TO_NUMBER('~(gpv.stunum)' DEFAULT 0 ON CONVERSION ERROR)) AS student_exists
+FROM dual]
+  {
+    "field_exists": "~(field_exists)",
+    "has_studentsdcid": "~(has_studentsdcid)",
+    "student_exists": "~(student_exists)"
+  },
+[/tlist_sql]
+{}]
